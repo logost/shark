@@ -244,6 +244,8 @@ class TableScanOperator extends TopOperator[HiveTableScanOperator] with HiveTopO
   private def createHadoopRdd(path: String, ifc: Class[InputFormat[Writable, Writable]])
   : RDD[Writable] = {
     val conf = new JobConf()
+    org.apache.hadoop.hive.ql.plan.PlanUtils.configureInputJobPropertiesForStorageHandler(tableDesc);
+    org.apache.hadoop.hive.ql.exec.Utilities.copyTableJobPropertiesToConf(tableDesc, conf)
     FileInputFormat.setInputPaths(conf, path)
     val bufferSize = System.getProperty("spark.buffer.size", "65536")
     conf.set("io.file.buffer.size", bufferSize)
